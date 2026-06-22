@@ -1,42 +1,37 @@
--- [[ Simple Auto-Parry for Blade Ball (Mobile Optimized) ]] --
-
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
-local ParryDistance = 20 -- Можешь менять число, если нужно дальше/ближе
+local ParryDistance = 25
 
 local function getBall()
-    for _, obj in ipairs(workspace:GetChildren()) do
-        if obj.Name == "Ball" or obj:GetAttribute("IsBall") then
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and obj.Name == "Ball" then
             return obj
         end
     end
     return nil
 end
 
+local secretRemote = ReplicatedStorage:FindFirstChild("RE/jjinn` pd2>polaim")
+
 RunService.Heartbeat:Connect(function()
     local character = LocalPlayer.Character
     local hrp = character and character:FindFirstChild("HumanoidRootPart")
     local ball = getBall()
     
-    if ball and hrp then
+    if ball and hrp and secretRemote then
         local distance = (ball.Position - hrp.Position).Magnitude
         
-        -- Если мяч рядом, пробуем отбить
         if distance <= ParryDistance then
-            local remote = ReplicatedStorage:FindFirstChild("Remotes") and ReplicatedStorage.Remotes:FindFirstChild("ParryButtonPress")
-            if remote then
-                remote:FireServer()
-            end
+            secretRemote:FireServer()
         end
     end
 end)
 
--- Уведомление об успешном запуске
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Blade Ball",
-    Text = "Auto-Parry Active!",
-    Duration = 3
+    Text = "Custom Auto-Parry Active!",
+    Duration = 4
 })
